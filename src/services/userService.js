@@ -170,7 +170,7 @@ const updateUser = (data) => {
     return new Promise(async (resolve, reject) => {
         try {
             let dataId = data.id
-            if (!dataId || !data.gender || !data.positionId || !data.roleId) {
+            if (!dataId || !data.gender || !data.roleId) {
                 resolve({
                     errCode: 1,
                     errMessage: "Missing parameters"
@@ -193,7 +193,9 @@ const updateUser = (data) => {
             user.phoneNumber = data.phoneNumber
             user.gender = data.gender
             user.roleId = data.roleId
-            user.positionId = data.positionId
+            if (user.positionId) {
+                user.positionId = data.positionId
+            }
             if (user.image) {
                 user.image = data.avatar
             }

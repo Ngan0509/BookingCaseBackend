@@ -24,6 +24,8 @@ const initApiRoutes = (app) => {
 
     router.post("/api/bulk-schedule-doctor", doctorController.saveScheduleDoctor)
     router.get("/api/get-schedule-by-date", doctorController.getScheduleByDate)
+    router.delete("/api/delete-date-old", doctorController.deleteDateOld)
+    
 
     router.get("/api/get-address-info-doctor", doctorController.getAddressInfoDoctor)
     router.get("/api/get-profile-doctor", doctorController.getProfileDoctor)

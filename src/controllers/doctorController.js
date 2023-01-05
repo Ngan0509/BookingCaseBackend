@@ -80,6 +80,19 @@ const getScheduleByDate = async (req, res) => {
     }
 }
 
+const deleteDateOld = async (req, res) => {
+    try {
+        let resp = await doctorService.deleteDateOld()
+        return res.status(200).json(resp)
+    } catch (error) {
+        console.log(error)
+        return res.status(200).json({
+            errCode: -1,
+            errMessage: "Error from server"
+        })
+    }
+}
+
 const getAddressInfoDoctor = async (req, res) => {
     try {
         let resp = await doctorService.getAddressInfoDoctor(req.query.doctorId)
@@ -134,6 +147,6 @@ const sendRemedy = async (req, res) => {
 
 export {
     getTopDoctorHome, getAllDoctors, saveInfoDoctor,
-    getDetailDoctor, saveScheduleDoctor, getScheduleByDate,
+    getDetailDoctor, saveScheduleDoctor, getScheduleByDate, deleteDateOld,
     getAddressInfoDoctor, getProfileDoctor, getListPatientForDoctor, sendRemedy
 }

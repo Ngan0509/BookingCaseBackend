@@ -37,7 +37,7 @@ const handleCreateNewUser = async (req, res) => {
 }
 
 const handleDeleteNewUser = async (req, res) => {
-    let userId = req.body.id
+    let userId = req.query.id
     if (!userId) {
         return res.status(200).json({
             errCode: 1,

@@ -191,38 +191,54 @@ const MAX_NUMBER_SCHEDULE = process.env.MAX_NUMBER_SCHEDULE
 const saveScheduleDoctor = (data) => {
     return new Promise(async (resolve, reject) => {
         try {
-            if (!data.arrSchedule || !data.doctorId || !data.date) {
+            const { arrSchedule, doctorId, date, hasOldData } = data;
+            if (!arrSchedule || !doctorId || !date) {
                 resolve({
                     errCode: 1,
                     errMessage: "Missing required parameters"
                 })
             }
 
-            let arrSchedule = data.arrSchedule
             if (arrSchedule && arrSchedule.length > 0) {
-                arrSchedule = arrSchedule.map(item => ({
+                let arrResult = arrSchedule.map(item => ({
                     ...item,
                     maxNumber: MAX_NUMBER_SCHEDULE
                 }))
 
-                let existing = await db.Schedule.findAll({
-                    where: {
-                        doctorId: data.doctorId,
-                        date: data.date
-                    },
-                    attributes: ['doctorId', 'date', 'maxNumber', 'timeType']
-                })
-
-
-                let toCreate = _.differenceWith(arrSchedule, existing, (a, b) => {
-                    return a.timeType === b.timeType && +a.date === +b.date
-                })
-
-                if (toCreate && toCreate.length > 0) {
-                    await db.Schedule.bulkCreate(toCreate)
+                if (hasOldData) {
+                    let schedules = await db.Schedule.findAll({
+                        where: {
+                            doctorId,
+                            date
+                        },
+                        raw: false
+                    })
+                    if (schedules && schedules.length > 0) {
+                        await schedules.forEach(schedule => {
+                            schedule.destroy();
+                        })
+                    }
                 }
+                await db.Schedule.bulkCreate(arrResult)
 
-                console.log("........", toCreate)
+                //     let existing = await db.Schedule.findAll({
+                //         where: {
+                //             doctorId: data.doctorId,
+                //             date: data.date
+                //         },
+                //         attributes: ['doctorId', 'date', 'maxNumber', 'timeType']
+                //     })
+
+
+                //     let toCreate = _.differenceWith(arrSchedule, existing, (a, b) => {
+                //         return a.timeType === b.timeType && +a.date === +b.date
+                //     })
+
+                //     if (toCreate && toCreate.length > 0) {
+                //         await db.Schedule.bulkCreate(toCreate)
+                //     }
+
+                //     console.log("........", toCreate)
             }
             resolve({
                 errCode: 0,
@@ -268,6 +284,29 @@ const getScheduleByDate = (doctorId, date) => {
                     errCode: 0,
                     errMessage: "Get Schedule is success",
                     data: schedule
+                })
+            }
+        } catch (error) {
+            reject(error)
+        }
+    })
+}
+
+const deleteDateOld = () => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let currentDate = new Date().setHours(0, 0, 0, 0);
+            let schedulesOld = await db.Schedule.findAll({
+                raw: false
+            })
+            let result = schedulesOld.filter(item => +item.date < currentDate);
+            if (result && result.length > 0) {
+                await result.forEach(item => {
+                    item.destroy()
+                })
+                resolve({
+                    errCode: 0,
+                    errMessage: "Delete schedule old is success",
                 })
             }
         } catch (error) {
@@ -460,6 +499,6 @@ const sendRemedy = (data) => {
 
 export {
     getTopDoctorHome, getAllDoctors, saveInfoDoctor,
-    getDetailDoctor, saveScheduleDoctor, getScheduleByDate, getAddressInfoDoctor,
+    getDetailDoctor, saveScheduleDoctor, getScheduleByDate, deleteDateOld, getAddressInfoDoctor,
     getProfileDoctor, getListPatientForDoctor, sendRemedy
 }
