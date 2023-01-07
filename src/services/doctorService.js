@@ -173,7 +173,7 @@ const getDetailDoctor = (inputId) => {
                     })
                 } else {
                     if (doctor.image) {
-                        doctor.image = new Buffer(doctor.image, "base64").toString('binary')
+                        doctor.image = Buffer.from(doctor.image, "base64").toString('binary')
                     }
                     resolve({
                         errCode: 0,
@@ -401,7 +401,7 @@ const getProfileDoctor = (inputId) => {
                     })
                 } else {
                     if (doctor.image) {
-                        doctor.image = new Buffer(doctor.image, "base64").toString('binary')
+                        doctor.image = Buffer.from(doctor.image, "base64").toString('binary')
                     }
                     resolve({
                         errCode: 0,

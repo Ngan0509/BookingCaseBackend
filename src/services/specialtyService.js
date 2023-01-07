@@ -129,7 +129,7 @@ const getDetailSpecialty = (inputId, location) => {
                     }
                     specialty.doctorSpecialty = doctorSpecialty
                     if (specialty.image) {
-                        specialty.image = new Buffer(specialty.image, "base64").toString('binary')
+                        specialty.image = Buffer.from(specialty.image, "base64").toString('binary')
                     }
                     resolve({
                         errCode: 0,

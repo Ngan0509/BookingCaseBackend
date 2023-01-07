@@ -129,7 +129,7 @@ const getDetailClinic = (inputId, location) => {
                     }
                     clinic.doctorClinic = doctorClinic
                     if (clinic.image) {
-                        clinic.image = new Buffer(clinic.image, "base64").toString('binary')
+                        clinic.image = Buffer.from(clinic.image, "base64").toString('binary')
                     }
                     resolve({
                         errCode: 0,
